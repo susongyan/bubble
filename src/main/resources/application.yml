@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/ids;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
+  sql:
+    init:
+      mode: always
+  jpa:
+    open-in-view: false
+
+server:
+  port: 8080
+
+bubble:
+  segment:
+    min-step: 1000
+    max-step: 100000
+    fast-consume-threshold-seconds: 60
+    slow-consume-threshold-seconds: 600
+    prefetch-threshold: 0.8

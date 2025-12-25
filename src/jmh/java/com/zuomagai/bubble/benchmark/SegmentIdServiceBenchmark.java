@@ -12,6 +12,7 @@ import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,11 @@ public class SegmentIdServiceBenchmark {
 
             IdGeneratorProperties properties = new IdGeneratorProperties();
             service = new SegmentIdService(new InMemoryRepository(seed), properties);
+        }
+
+        @TearDown(Level.Trial)
+        public void tearDown() {
+            service.shutdown();
         }
     }
 

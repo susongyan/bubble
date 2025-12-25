@@ -27,6 +27,10 @@ public class SegmentIdService {
         this.properties = properties;
     }
 
+    public void shutdown() {
+        executor.shutdown();
+    }
+
     public long nextId(String bizTag) {
         Objects.requireNonNull(bizTag, "bizTag cannot be null");
         SegmentBuffer buffer = bufferCache.computeIfAbsent(bizTag, this::initBuffer);

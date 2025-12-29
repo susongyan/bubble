@@ -5,8 +5,11 @@ import com.zuomagai.bubble.model.BubbleAlloc;
 import com.zuomagai.bubble.model.Segment;
 import com.zuomagai.bubble.model.SegmentBuffer;
 import com.zuomagai.bubble.repository.BubbleAllocRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -16,6 +19,8 @@ import java.util.concurrent.Executors;
 
 @Service
 public class SegmentIdService {
+
+    private static final Logger log = LoggerFactory.getLogger(SegmentIdService.class);
 
     private final BubbleAllocRepository repository;
     private final IdGeneratorProperties properties;
@@ -27,8 +32,22 @@ public class SegmentIdService {
         this.properties = properties;
     }
 
+    @PreDestroy
+    public void destroy() {
+        shutdown();
+    }
+
     public void shutdown() {
         executor.shutdown();
+        try {
+            if (!executor.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                log.warn("SegmentIdService executor did not terminate in time; forcing shutdown.");
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            executor.shutdownNow();
+        }
     }
 
     public long nextId(String bizTag) {

@@ -40,4 +40,14 @@ class SegmentIdServiceIntegrationTest {
     void throwsWhenBizTagIsMissing() {
         assertThrows(IllegalArgumentException.class, () -> segmentIdService.nextId("missing"));
     }
+
+    @Test
+    void includesSegmentUpperBoundWhenStepIsThousand() {
+        long lastId = 0;
+        for (int i = 0; i < 1000; i++) {
+            lastId = segmentIdService.nextId("order");
+        }
+
+        assertEquals(1000L, lastId);
+    }
 }

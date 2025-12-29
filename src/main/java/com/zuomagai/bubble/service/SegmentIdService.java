@@ -48,13 +48,13 @@ public class SegmentIdService {
         while (true) {
             Segment current = buffer.getCurrent();
             long value = current.getAndIncrement();
-            if (value < current.getMax()) {
+            if (value <= current.getMax()) {
                 triggerPrefetchIfNeeded(bizTag, buffer, current, value);
                 return value;
             }
 
             synchronized (buffer) {
-                if (value < current.getMax()) {
+                if (value <= current.getMax()) {
                     triggerPrefetchIfNeeded(bizTag, buffer, current, value);
                     return value;
                 }
@@ -65,7 +65,7 @@ public class SegmentIdService {
                 }
                 loadSegment(bizTag, current, buffer);
                 current = buffer.getCurrent();
-                if (current.getValue() < current.getMax()) {
+                if (current.getValue() <= current.getMax()) {
                     return current.getAndIncrement();
                 }
             }
